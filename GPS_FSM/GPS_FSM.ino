@@ -2,6 +2,9 @@
 #define GPS1    0
 #define GPS2    1
 #define GPS3    2
+#define IMU     3
+#define LIDAR   4
+#define TX      5
 
 SoftwareSerial gpsSerial1(4, 5);
 SoftwareSerial gpsSerial2(6, 7);
@@ -35,16 +38,29 @@ void setup() {
 
 void loop() {
     if (state == GPS1){
-        readGPS1(1,0);
+        readGPS1(0,0);
         state = GPS2;
     }
     else if (state == GPS2){
-        readGPS2(1,0);
+        readGPS2(0,0);
         state = GPS3;
     }
-
     else if (state == GPS3){
-        readGPS3(1,0);
+        readGPS3(0,0);
+        state = IMU;
+    }
+    else if (state == IMU){
+        Serial.println("IMU");
+        state = LIDAR;
+    }
+    else if (state == LIDAR){
+        Serial.println("LIDAR");
+        state = TX;
+    }
+    else if (state == TX){
+        Serial.print("GPS1 : "); Serial.print(latitude[0], 15); Serial.print("  /  "); Serial.println(longitude[0], 15);
+        Serial.print("GPS2 : "); Serial.print(latitude[1], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
+        Serial.print("GPS3 : "); Serial.print(latitude[2], 15); Serial.print("  /  "); Serial.println(longitude[2], 15);
         state = GPS1;
     }
 }
