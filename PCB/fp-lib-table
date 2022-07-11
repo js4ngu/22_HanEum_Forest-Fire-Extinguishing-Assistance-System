@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name MtFireDrone)(type KiCad)(uri ${KIPRJMOD}/MtFireDrone.pretty)(options "")(descr ""))
-)
