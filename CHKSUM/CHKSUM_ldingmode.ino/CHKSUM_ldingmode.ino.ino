@@ -4,13 +4,13 @@
 #define IDLING 0
 #define SENSING 1
 
-#define GPS1 2
-#define GPS2 3
-#define GPS3 4
-#define IMU 5
-#define LIDAR 6
-#define CHKSUM 7
-#define TX 8
+#define GPS1 0
+#define GPS2 1
+#define GPS3 2
+#define IMU 3
+#define LIDAR 4
+#define CHKSUM 5
+#define TX 6
 
 #define SBUF_SIZE 64 // about IMU
 #define GPS_RX_NUM_THRS 3
@@ -30,6 +30,9 @@ void readLidar(bool print);
 
 int parsingGPS(char c, int *nowflag, double *latitude, float *longitude, bool print_raw);
 int EBimuAsciiParser(float *item, int number_of_item);
+
+//mode flag
+bool modeFlag = 0;
 
 //reSensing
 bool reSensingFlag = 0;
@@ -58,7 +61,9 @@ uint16_t distance, strength;   // 거리와 강도를 담는 변수
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Start GPS...");
+    Serial.println("Start SYS");
+    pinMode(A0, INPUT);
+
     gpsSerial1.begin(9600);
     gpsSerial2.begin(9600);
     gpsSerial3.begin(9600);
@@ -69,123 +74,129 @@ void setup() {
 }
 
 void loop() {
-    if (state == GPS1) {
-        if (reSensingFlag) {
-            readGPS1(0, 0);
-            flag[0] = 0;
-            reSensingFlag = 0;
-            gpsSerial1.listen();
-            state = CHKSUM;
-        }
-        else{
-            readGPS1(0, 0);
-            state = GPS2;
-        }
+    if (modeFlag == IDLING ) {
+        if(digitalRead(A0)) modeFlag = SENSING;
+        else modeFlag = IDLING;
     }
-    else if (state == GPS2) {
-        if (reSensingFlag) {
-            readGPS2(0, 0);
-            flag[0] = 0;
-            reSensingFlag = 0;
-            gpsSerial1.listen();
-            state = CHKSUM;
-        }
-        else{
-            readGPS2(0, 0);
-            state = GPS3;
-        }
-    }
-    else if (state == GPS3) {
-        if (reSensingFlag) {
-            readGPS3(0, 0);
-            flag[0] = 0;
-            reSensingFlag = 0;
-            gpsSerial1.listen();
-            state = CHKSUM;
-        }
-        else{
-            readGPS3(0, 0);
-            state = IMU;
-        }
-    }
-    else if (state == IMU) {
-        if (reSensingFlag) {
-            readIMU(0);
-            flag[0] = 0;
-            reSensingFlag = 0;
-            gpsSerial1.listen();
-            state = CHKSUM;
-        }
-        else{
-            readIMU(0);
-            state = LIDAR;
-        }
-    }
-    else if (state == LIDAR) {
-        if (reSensingFlag) {
-            readLidar(0);
-            flag[0] = 0;
-            reSensingFlag = 0;
-            gpsSerial1.listen();
-            state = CHKSUM;
-        }
-        else{
-            readLidar(0);
-            state = CHKSUM;
-        }
-    }
-    else if (state == CHKSUM) {
-        //GPS CHK
-        // GPS1 Rx Test
-        if ( (latitude[0] == 0) || (longitude[0] == 0) ) { 
-            if (gpsRxNum[0] < GPS_RX_NUM_THRS) {
-                reSensingFlag = 1;
-                state = GPS1;
+    else if (modeFlag == SENSING) { 
+        if (state == GPS1) {
+            if (reSensingFlag) {
+                readGPS1(0, 0);
+                flag[0] = 0;
+                reSensingFlag = 0;
                 gpsSerial1.listen();
-                gpsRxNum[0]++;
+                state = CHKSUM;
             }
-        }
-        else if ( (latitude[1] == 0) || (longitude[1] == 0) ) { 
-            if (gpsRxNum[1] < GPS_RX_NUM_THRS) {
-                reSensingFlag = 1;
+            else{
+                readGPS1(0, 0);
                 state = GPS2;
-                gpsSerial2.listen();
-                gpsRxNum[1]++;
             }
         }
-        // GPS3 Rx Test
-        else if ( (latitude[2] == 0) || (longitude[2] == 0) ) { 
-            if (gpsRxNum[2] < GPS_RX_NUM_THRS) {
-                reSensingFlag = 1;
+        else if (state == GPS2) {
+            if (reSensingFlag) {
+                readGPS2(0, 0);
+                flag[0] = 0;
+                reSensingFlag = 0;
+                gpsSerial1.listen();
+                state = CHKSUM;
+            }
+            else{
+                readGPS2(0, 0);
                 state = GPS3;
-                gpsSerial3.listen();
-                gpsRxNum[2]++;
             }
         }
-        //IMU CHK
-        else if ( (euler[0] == 0) || (euler[1] == 0) || (euler[2] == 0) ) {
-            reSensingFlag = 1;
-            state = IMU;
-            imuSerial.listen();
+        else if (state == GPS3) {
+            if (reSensingFlag) {
+                readGPS3(0, 0);
+                flag[0] = 0;
+                reSensingFlag = 0;
+                gpsSerial1.listen();
+                state = CHKSUM;
+            }
+            else{
+                readGPS3(0, 0);
+                state = IMU;
+            }
         }
-        //Lidat CHK
-        else if ( (distance == 0) || (strength == 0) ) {
-            reSensingFlag = 1;
-            state = LIDAR;
-            lidarSerial.listen();
+        else if (state == IMU) {
+            if (reSensingFlag) {
+                readIMU(0);
+                flag[0] = 0;
+                reSensingFlag = 0;
+                gpsSerial1.listen();
+                state = CHKSUM;
+            }
+            else{
+                readIMU(0);
+                state = LIDAR;
+            }
         }
-        else
-            state = TX;
+        else if (state == LIDAR) {
+            if (reSensingFlag) {
+                readLidar(0);
+                flag[0] = 0;
+                reSensingFlag = 0;
+                gpsSerial1.listen();
+                state = CHKSUM;
+            }
+            else{
+                readLidar(0);
+                state = CHKSUM;
+            }
+        }
+        else if (state == CHKSUM) {
+            //GPS CHK
+            // GPS1 Rx Test
+            if ( (latitude[0] == 0) || (longitude[0] == 0) ) { 
+                if (gpsRxNum[0] < GPS_RX_NUM_THRS) {
+                    reSensingFlag = 1;
+                    state = GPS1;
+                    gpsSerial1.listen();
+                    gpsRxNum[0]++;
+                }
+            }
+            else if ( (latitude[1] == 0) || (longitude[1] == 0) ) { 
+                if (gpsRxNum[1] < GPS_RX_NUM_THRS) {
+                    reSensingFlag = 1;
+                    state = GPS2;
+                    gpsSerial2.listen();
+                    gpsRxNum[1]++;
+                }
+            }
+            // GPS3 Rx Test
+            else if ( (latitude[2] == 0) || (longitude[2] == 0) ) { 
+                if (gpsRxNum[2] < GPS_RX_NUM_THRS) {
+                    reSensingFlag = 1;
+                    state = GPS3;
+                    gpsSerial3.listen();
+                    gpsRxNum[2]++;
+                }
+            }
+            //IMU CHK
+            else if ( (euler[0] == 0) || (euler[1] == 0) || (euler[2] == 0) ) {
+                reSensingFlag = 1;
+                state = IMU;
+                imuSerial.listen();
+            }
+            //Lidat CHK
+            else if ( (distance == 0) || (strength == 0) ) {
+                reSensingFlag = 1;
+                state = LIDAR;
+                lidarSerial.listen();
+            }
+            else
+                state = TX;
+        }
+        else if (state == TX) {
+            Serial.print("GPS1 : "); Serial.print(latitude[0], 15); Serial.print("  /  "); Serial.println(longitude[0], 15);
+            Serial.print("GPS2 : "); Serial.print(latitude[1], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
+            Serial.print("GPS3 : "); Serial.print(latitude[2], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
+            Serial.print("IMU : "); Serial.print(euler[0], 10); Serial.print("  /  "); Serial.print(euler[1], 10); Serial.print("  /  "); Serial.println(euler[2], 10);
+            Serial.print("Distance : "); Serial.print(distance); Serial.print("  /  "); Serial.print("Strength : "); Serial.println(strength);
+            state = GPS1;
+        }
+        modeFlag = IDLING;
     }
-    else if (state == TX) {
-        Serial.print("GPS1 : "); Serial.print(latitude[0], 15); Serial.print("  /  "); Serial.println(longitude[0], 15);
-        Serial.print("GPS2 : "); Serial.print(latitude[1], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
-        Serial.print("GPS3 : "); Serial.print(latitude[2], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
-        Serial.print("IMU : "); Serial.print(euler[0], 10); Serial.print("  /  "); Serial.print(euler[1], 10); Serial.print("  /  "); Serial.println(euler[2], 10);
-        Serial.print("Distance : "); Serial.print(distance); Serial.print("  /  "); Serial.print("Strength : "); Serial.println(strength);
-        state = GPS1;
-    }
-
 }
 
 void readGPS1(bool print_value, bool print_raw) {
