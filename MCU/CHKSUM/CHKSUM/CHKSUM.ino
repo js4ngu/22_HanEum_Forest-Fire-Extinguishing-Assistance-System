@@ -79,7 +79,7 @@
                 state = CHKSUM;
             }
             else{
-                Serial.println("GPS1");
+                //Serial.println("GPS1");
                 readGPS1(0, 0);
                 state = GPS2;
             }
@@ -94,7 +94,7 @@
                 state = CHKSUM;
             }
             else{
-                Serial.println("GPS2");
+                //Serial.println("GPS2");
                 readGPS2(0, 0);
                 state = GPS3;
             }
@@ -109,7 +109,7 @@
                 state = CHKSUM;
             }
             else{
-                Serial.println("GPS3");
+                //Serial.println("GPS3");
                 readGPS3(0, 0);
                 state = IMU;
             }
@@ -118,7 +118,7 @@
             if (reSensingFlag) {
                 Serial.println("reIMU");
                 for(int i = 0; i <TRY_IMU ; i++){
-                    readIMU(1);
+                    readIMU(0);
                 }
                 flag[0] = 0;
                 reSensingFlag = 0;
@@ -126,8 +126,8 @@
                 state = CHKSUM;
             }
             else{
-                Serial.println("IMU");
-                readIMU(1);
+                //Serial.println("IMU");
+                readIMU(0);
                 state = LIDAR;
             }
         }
@@ -141,7 +141,7 @@
                 state = CHKSUM;
             }
             else{
-                Serial.println("Lidar");
+                //Serial.println("Lidar");
                 readLidar(0);
                 state = CHKSUM;
             }
