@@ -117,9 +117,7 @@
         else if (state == IMU) {
             if (reSensingFlag) {
                 Serial.println("reIMU");
-                for(int i = 0; i <TRY_IMU ; i++){
-                    readIMU(0);
-                }
+                readIMU(0);
                 flag[0] = 0;
                 reSensingFlag = 0;
                 gpsSerial1.listen();
