@@ -1,0 +1,90 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct STUDENT {
+   int number; // 학번
+   char name[20]; // 이름
+   float score; // 점수
+};
+
+int cmp_name(const void* v1, const void* v2);
+
+int main() {
+   FILE* fp;
+   FILE* fp2;
+
+   struct STUDENT s;
+   struct STUDENT temp;
+
+   int i = 0;
+
+   char buffer[5] = { 0, };
+   char txt_buf[64] = { NULL };
+
+   if ((fp = fopen("file.txt", "r+")) == NULL) {
+      printf("OPEN FAIL\n");
+      return 1;
+   }
+   if ((fp2 = fopen("sort.dat", "wb")) == NULL) {
+      printf("OPEN FAIL\n");
+      return 1;
+   }
+
+   while (feof(fp) == 0) {
+      fscanf(fp, "%d %s %f", &s.number, &s.name, &s.score);
+      i++;
+   }
+   struct STUDENT* s1 = malloc(sizeof(struct STUDENT) * i);
+
+   fseek(fp, 0L, SEEK_SET);
+   for (int j = 0; j < i; j++) {
+      fscanf(fp, "%d %s %f", &s.number, &s.name, &s.score);
+      (s1 + j)->number = s.number;
+      strcpy((s1 + j)->name, s.name);
+      (s1 + j)->score = s.score;
+   }
+
+   printf("\n===COUNT DATA===\n\n");
+   printf("DATA : %d\n", i);
+
+   printf("\n===SAVE DATA IN DYNAMIC MEMORY===\n\n");
+   for (int j = 0; j < i; j++) {
+      printf("%d %s %f \n", (s1 + j)->number, &(s1 + j)->name, (s1 + j)->score);
+   }
+
+   printf("\n===AFTER QUICK SORT===\n\n");
+   qsort(s1, i, sizeof(struct STUDENT), cmp_name);
+   for (int j = 0; j < i; j++) {
+      printf("%d %s %f \n", (s1 + j)->number, &(s1 + j)->name, (s1 + j)->score);
+      snprintf(txt_buf, sizeof(txt_buf), "%d %s %f \n", (s1 + j)->number, &(s1 + j)->name, (s1 + j)->score);
+      fwrite(txt_buf, sizeof(txt_buf), 1, fp2);       // 구조체의 내용을 파일에 저장
+   }
+   
+   fclose(fp);
+   fclose(fp2);
+
+   printf("\n===CLOSE DATA & READ DATA AGAIN===\n");
+   if ((fp2 = fopen("sort.dat", "rb")) == NULL) {
+      printf("OPEN FAIL\n");
+      return 1;
+   }
+
+   while (feof(fp2) == 0) {
+      fread(buffer, sizeof(char), 1, fp2);
+      printf("%s", buffer);
+      memset(buffer, 0, 5);
+   }
+
+   printf("\n");
+   fclose(fp2);    // 파일 포인터 닫기
+   free(s1);
+}
+
+int cmp_name(const void* v1, const void* v2) {
+   struct STUDENT* student1 = (struct STUDENT*)v1;
+   struct STUDENT* student2 = (struct STUDENT*)v2;
+   return strcmp(student1->name, student2->name);
+}

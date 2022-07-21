@@ -21,6 +21,7 @@ SoftwareSerial gpsSerial1(4, 5);
 SoftwareSerial gpsSerial2(6, 7);
 SoftwareSerial gpsSerial3(8, 9);
 SoftwareSerial lidarSerial(10, 11);
+SoftwareSerial RpiSerial(12, 13);
 
 void readGPS1(bool print_value, bool print_raw);
 void readGPS2(bool print_value, bool print_raw);
