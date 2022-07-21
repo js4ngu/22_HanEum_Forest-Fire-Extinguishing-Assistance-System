@@ -33,7 +33,9 @@
 
     //reSensing
     bool reSensingFlag = 0;
-    bool gpsRxNum[3] = {0.};
+    bool reGPSflag[3] = {1,1,1};
+    bool sensReady[5] = {0,0,0,0,0};
+    int gpsRxNum[3] = {0,0,0};
 
     // GPS Var
     int state = GPS1;
@@ -147,50 +149,59 @@
         else if (state == CHKSUM) {
             //GPS CHK
             // GPS1 Rx Test
-            if ( (latitude[0] == 0) || (longitude[0] == 0) ) { 
+            if (sensReady[0] = (latitude[0] == 0) || (longitude[0] == 0) && reGPSflag[0]) { 
                 if (gpsRxNum[0] < GPS_RX_NUM_THRS) {
                     flag[0] = 1;
                     reSensingFlag = 1;
                     state = GPS1;
                     gpsSerial1.listen();
                     gpsRxNum[0]++;
-                }
+                    sensReady[0] = 0;
+                    if (gpsRxNum[0]<= GPS_RX_NUM_THRS-1) {
+                        reGPSflag[0] = 0;
+                    }
+                }   
             }
-            else if ( (latitude[1] == 0) || (longitude[1] == 0) ) { 
+            if (sensReady[1] = (latitude[1] == 0) || (longitude[1] == 0) && reGPSflag[1]) { 
                 if (gpsRxNum[1] < GPS_RX_NUM_THRS) {
                     flag[1] = 1;
                     reSensingFlag = 1;
                     state = GPS2;
                     gpsSerial2.listen();
-                    gpsRxNum[1]++;  
+                    gpsRxNum[1]++;
+                    sensReady[1] = 0;
                 }
             }
             // GPS3 Rx Test
-            else if ( (latitude[2] == 0) || (longitude[2] == 0) ) { 
+            if (sensReady[2] = (latitude[2] == 0) || (longitude[2] == 0) && reGPSflag[2]) { 
                 if (gpsRxNum[2] < GPS_RX_NUM_THRS) {
                     flag[2] = 1;
                     reSensingFlag = 1;
                     state = GPS3;
                     gpsSerial3.listen();
                     gpsRxNum[2]++;
+                    sensReady[2] = 0;
                 }
             }
             //IMU CHK
-            else if ( (euler[0] == 0) || (euler[1] == 0) || (euler[2] == 0) ) {
+            if (sensReady[3] =  (euler[0] == 0) || (euler[1] == 0) || (euler[2] == 0) ) {
                 flag[3] = 1;
                 reSensingFlag = 1;
                 state = IMU;
                 imuSerial.listen();
             }
             //Lidat CHK
-            else if ( (distance == 0) || (strength == 0) ) {
+            if (sensReady[4] =  (distance == 0) || (strength == 0) ) {
                 flag[4] = 1;
                 reSensingFlag = 1;
                 state = LIDAR;
                 lidarSerial.listen();
             }
-            else
+            if ((sensReady[0] || sensReady[1] || sensReady[2] || sensReady[3] || sensReady[4]) != 0) {
                 state = TX;
+                gpsRxNum[0] = 0;    gpsRxNum[1] = 0;    gpsRxNum[2] = 0;
+                reGPSflag[0] = 0;   reGPSflag[1] = 0;   reGPSflag[2] = 0;
+            }
         }
         else if (state == TX) {
             Serial.print("GPS1 : "); Serial.print(latitude[0], 15); Serial.print("  /  "); Serial.println(longitude[0], 15);
@@ -198,6 +209,7 @@
             Serial.print("GPS3 : "); Serial.print(latitude[2], 15); Serial.print("  /  "); Serial.println(longitude[1], 15);
             Serial.print("IMU : "); Serial.print(euler[0], 10); Serial.print("  /  "); Serial.print(euler[1], 10); Serial.print("  /  "); Serial.println(euler[2], 10);
             Serial.print("Distance : "); Serial.print(distance); Serial.print("  /  "); Serial.print("Strength : "); Serial.println(strength);
+
             state = GPS1;
         }
 
