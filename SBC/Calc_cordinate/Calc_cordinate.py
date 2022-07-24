@@ -24,14 +24,14 @@ def main():
     #Parsing Data Area
     lat_org = 37.2221
     lon_org = 127.1885
-    heading = 269.9997
+    heading = 269.9997 #편각 보정 함수 적용 예정 -> 위도에 따라 선형하게 편각
     pitch = 30
     Lidar = 79.69 * 2
     
     #calc new data
     distance = calc_Distance(pitch, Lidar)
     lat_TGT, lon_TGT = calc_Cord(lat_org, lon_org, heading, distance)
-    %
+    
     print(distance)
     print(lat_TGT, lon_TGT)
 
