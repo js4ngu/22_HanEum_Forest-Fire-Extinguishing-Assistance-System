@@ -1,20 +1,19 @@
 import geopy
 import geopy.distance
 
-#def m2km(m): 
-#    return m*0.001
 
-# given: lat_oscar, lon_oscar, b = bearing in degrees, d = distance in kilometers
+def calc_Cord(lat_ORG, lon_ORG ,bearing, mDistance):
+    distance = 0.001 * mDistance
+    
+    origin = geopy.Point(lat_ORG, lon_ORG)
+    destination = geopy.distance.distance(kilometers=distance).destination(origin, bearing)
 
-lat_oscar = 37.2221
-lon_oscar = 127.1876
-bearing = 230
-distance = 83 * 0.001
+    lat_TGT, lon_TGT = destination.latitude, destination.longitude
+    return lat_TGT, lon_TGT
 
-origin = geopy.Point(lat_oscar, lon_oscar)
-destination = geopy.distance.distance(kilometers=distance).destination(origin, bearing)
-
-lat_Tango, lon_Tango = destination.latitude, destination.longitude
-
-print(lat_Tango)
-print(lon_Tango)
+def main():
+    lat_TGT, lon_TGT = calc_Cord(37.2225, 127.1873, 180, 40)
+    print(lat_TGT)
+    print(lon_TGT)
+    
+main()
