@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial RPI(4, 5);
+SoftwareSerial RPI(12, 13);
 
 void setup() {
     Serial.begin(9600);
