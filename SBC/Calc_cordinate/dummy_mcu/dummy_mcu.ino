@@ -6,17 +6,22 @@ float longitude[3]  = {127.1876,    127.1876,   127.1876,};
 float euler[3]      = {60,          0,          210};
 uint16_t distance   = 2000;
 
+void monitor();
+void RPITX();
+
 void setup() {
     Serial.begin(9600);
     RPI.begin(9600);
 }
 
 void loop() {
-    monitor();
-    rpiTX();
+    RPI.println("TEST");
+    Serial.println("TEST");
+    //monitor();
+    //RPITX();
     delay(2000);
 }
-
+/*
 void monitor(){
     Serial.print(latitude[0], 15); Serial.print(","); Serial.print(longitude[0], 15); Serial.print(",");
     Serial.print(latitude[1], 15); Serial.print(","); Serial.println(longitude[1], 15); Serial.print(",");
@@ -25,10 +30,11 @@ void monitor(){
     Serial.println(distance, 5);
 }
 
-void rpiTX(){
+void RPITX(){
     RPI.print(latitude[0], 15); RPI.print(","); RPI.print(longitude[0], 15); RPI.print(",");
     RPI.print(latitude[1], 15); RPI.print(","); RPI.println(longitude[1], 15); RPI.print(",");
     RPI.print(latitude[2], 15); RPI.print(","); RPI.println(longitude[1], 15); RPI.print(",");
     RPI.print(euler[0], 10); RPI.print(","); RPI.print(euler[1], 10); RPI.print(","); RPI.print(euler[2], 10); RPI.print(",");
     RPI.println(distance, 5);
 }
+*/
