@@ -34,7 +34,7 @@ int EBimuAsciiParser(float *item, int number_of_item) {
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Start GPS... ");
+    Serial.println("Start...");
     imuSerial.begin(115200);
 }
     

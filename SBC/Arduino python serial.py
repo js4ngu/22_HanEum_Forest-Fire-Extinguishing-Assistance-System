@@ -1,5 +1,5 @@
 import serial
-PORT = 'COM4'
+PORT = 'COM10'
 BaudRate = 9600
 ARD= serial.Serial(PORT,BaudRate)
 
@@ -28,8 +28,8 @@ def Ardread():
         else : 
             print("")
 
+def main():
+    while (True):
+        Ardread()
 
-while (True):
-    Ardread()
-    
-
+main()

@@ -35,11 +35,11 @@ void loop() {
                 String Long1 = Long.substring(0, 3);
                 String Long2 = Long.substring(3);
 
-                // 좌표 계산.
+                // 좌표 계산
                 double LatF = Lat1.toDouble() + Lat2.toDouble()/60;
                 float LongF = Long1.toFloat() + Long2.toFloat()/60;
 
-                // 좌표 출력.
+                // 좌표 출력
                 Serial.print("Lat : ");
                 Serial.println(LatF, 15);
                 Serial.print("Long : ");

@@ -1,5 +1,4 @@
 #include <SoftwareSerial.h>
-#include <DFRobot_TFmini.h>
 
 #define GPS1 0
 #define GPS2 1
@@ -14,20 +13,17 @@ SoftwareSerial imuSerial(2, 3);
 SoftwareSerial gpsSerial1(4, 5);
 SoftwareSerial gpsSerial2(6, 7);
 SoftwareSerial gpsSerial3(8, 9);
-SoftwareSerial lidarSerial(11, 10); // RX, TX
 
 void readGPS1(bool print_value, bool print_raw);
 void readGPS2(bool print_value, bool print_raw);
 void readGPS3(bool print_value, bool print_raw);
 void readIMU(bool print);
-void readLidar(bool print);
-
 int parsingGPS(char c, int *nowflag, double *latitude, float *longitude, bool print_raw);
 int EBimuAsciiParser(float *item, int number_of_item);
 
 // GPS Var
 int state = GPS1;
-int flag[5] = {1, 0, 0, 0, 0};
+int flag[4] = {1, 0, 0, 0};
 
 double latitude[3];
 float longitude[3];
@@ -42,19 +38,13 @@ char sbuf[SBUF_SIZE];
 signed int sbuf_cnt = 0;
 float euler[3];
 
-//lidar
-DFRobot_TFmini  lidar;
-uint16_t distance, strength;   // 거리와 강도를 담는 변수
-
 void setup() {
     Serial.begin(9600);
     Serial.println("Start GPS...");
+    imuSerial.begin(115200);
     gpsSerial1.begin(9600);
     gpsSerial2.begin(9600);
     gpsSerial3.begin(9600);
-    lidarSerial.begin(9600);
-    lidar.begin(lidarSerial);
-    imuSerial.begin(115200);
     gpsSerial1.listen();
 }
 
@@ -76,7 +66,7 @@ void loop() {
         state = LIDAR;
     }
     else if (state == LIDAR) {
-        readLidar(0);
+        Serial.println("LIDAR");
         state = TX;
     }
     else if (state == TX) {
@@ -98,11 +88,6 @@ void loop() {
         Serial.print(euler[1], 10);
         Serial.print("  /  ");
         Serial.println(euler[2], 10);
-        Serial.print("Distance = ");
-        Serial.print(distance);
-        Serial.print("cm  /   ");
-        Serial.print("Strength = ");
-        Serial.println(strength);
         state = GPS1;
     }
 }
@@ -165,7 +150,7 @@ void readGPS3(bool print_value, bool print_raw) {
 }
 
 void readIMU(bool print) {
-    while (flag[3]) {
+    while (flag[3]) {   
         if(EBimuAsciiParser(euler, 3)){
             if (print) {
                 Serial.print("\n\r");
@@ -177,25 +162,6 @@ void readIMU(bool print) {
                 Serial.println(" ");
             }
             flag[3] = 0;
-        }
-    }
-    flag[4] = 1;
-    lidarSerial.listen();
-}
-
-void readLidar(bool print) {
-    while (flag[4]) { 
-        if (lidar.measure()) {                  // 거리와 신호의 강도를 측정합니다. 성공하면 을 반환하여 if문이 작동합니다.
-            distance = lidar.getDistance();       // 거리값을 cm단위로 불러옵니다.
-            strength = lidar.getStrength();       // 신호의 강도를 불러옵니다. 측정 대상이 넓으면 강도가 커집니다.
-            if (print) {
-                Serial.print("Distance = ");
-                Serial.print(distance);
-                Serial.println("cm");
-                Serial.print("Strength = ");
-                Serial.println(strength);
-            }
-            flag[4] = 0;
         }
     }
     flag[0] = 1;

@@ -14,8 +14,8 @@ SoftwareSerial imuSerial(2, 3);
 SoftwareSerial gpsSerial1(4, 5);
 SoftwareSerial gpsSerial2(6, 7);
 SoftwareSerial gpsSerial3(8, 9);
-SoftwareSerial lidarSerial(10, 11); // RX, TX
-SoftwareSerial xbee(12, 13);
+SoftwareSerial lidarSerial(11, 10); // RX, TX
+SoftwareSerial xbee(13, 12);
 
 void readGPS1(bool print_value, bool print_raw);
 void readGPS2(bool print_value, bool print_raw);
@@ -83,6 +83,7 @@ void loop() {
         state = TX;
     }
     else if (state == TX) {
+        xbeeTx();
         Serial.print("GPS1 : ");
         Serial.print(latitude[0], 15);
         Serial.print("  /  ");
@@ -207,26 +208,26 @@ void readLidar(bool print) {
 
 void xbeeTx() {
     while (flag[5]) { 
-        xbee.write(latitude[0], 15);
-        xbee.write("  /  ");
-        xbee.write(longitude[0], 15);
-        xbee.write("  /  ");
-        xbee.write(latitude[1], 15);
-        xbee.write("  /  ");
-        xbee.write(longitude[1], 15);
-        xbee.write("  /  ");
-        xbee.write(latitude[2], 15);
-        xbee.write("  /  ");
-        xbee.write(longitude[2], 15);
-        xbee.write("  /  ");
-        xbee.write(euler[0], 10);
-        xbee.write("  /  ");
-        xbee.write(euler[1], 10);
-        xbee.write("  /  ");
-        xbee.write(euler[2], 10);
-        xbee.write("  /  ");
-        xbee.write(distance);
-        xbee.write("\r\n");
+        xbee.print(latitude[0], 15);
+        xbee.print("  /  ");
+        xbee.print(longitude[0], 15);
+        xbee.print("  /  ");
+        xbee.print(latitude[1], 15);
+        xbee.print("  /  ");
+        xbee.print(longitude[1], 15);
+        xbee.print("  /  ");
+        xbee.print(latitude[2], 15);
+        xbee.print("  /  ");
+        xbee.print(longitude[2], 15);
+        xbee.print("  /  ");
+        xbee.print(euler[0], 10);
+        xbee.print("  /  ");
+        xbee.print(euler[1], 10);
+        xbee.print("  /  ");
+        xbee.print(euler[2], 10);
+        xbee.print("  /  ");
+        xbee.print(distance);
+        xbee.println("\r\n");
     }
     flag[0] = 1;
     gpsSerial1.listen();
@@ -293,4 +294,3 @@ int EBimuAsciiParser(float *item, int number_of_item) {
     }
     return result;
 }
-
