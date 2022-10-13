@@ -1,3 +1,5 @@
+#include <SoftwareSerial.h>
+
 SoftwareSerial xbee(13, 12);
 
 void setup() {

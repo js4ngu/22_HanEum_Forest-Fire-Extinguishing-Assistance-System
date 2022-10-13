@@ -52,7 +52,6 @@ void setup() {
     gpsSerial1.begin(9600);
     gpsSerial2.begin(9600);
     gpsSerial3.begin(9600);
-    lidarSerial.begin(9600);
     lidar.begin(lidarSerial);
     imuSerial.begin(115200);
     gpsSerial1.listen();
