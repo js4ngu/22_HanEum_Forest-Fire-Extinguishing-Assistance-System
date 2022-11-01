@@ -8,7 +8,7 @@ bool prev_btn = 0;
 bool LED_STATE = 1;
 
 void setup() {
-    pinMode(,INPUT);
+    pinMode(A0,INPUT);
     pinMode(13,OUTPUT);
     digitalWrite(13, HIGH);
 }
