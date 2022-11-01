@@ -81,7 +81,6 @@ void loop() {
         xbeeTX();
     }
     BTN_STATE = 0;
-    delay(3000);
 }
 
 bool BTN_toggle(){
