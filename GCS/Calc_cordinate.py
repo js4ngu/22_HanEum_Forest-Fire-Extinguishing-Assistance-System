@@ -9,7 +9,6 @@ import geopy.distance
 """
 def calc_Cord(lat_ORG, lon_ORG ,bearing, mDistance):
     distance = 0.001 * mDistance
-    
     origin = geopy.Point(lat_ORG, lon_ORG)
     destination = geopy.distance.distance(kilometers=distance).destination(origin, bearing)
 

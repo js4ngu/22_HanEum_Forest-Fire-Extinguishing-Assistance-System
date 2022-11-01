@@ -22,6 +22,7 @@ void setup(){
 }
 
 void loop(){
+    Serial.println("1");
     if(TFmini.measure()){                      //Measure Distance and get signal strength
         distance = TFmini.getDistance();       //Get distance data
         strength = TFmini.getStrength();       //Get signal strength data

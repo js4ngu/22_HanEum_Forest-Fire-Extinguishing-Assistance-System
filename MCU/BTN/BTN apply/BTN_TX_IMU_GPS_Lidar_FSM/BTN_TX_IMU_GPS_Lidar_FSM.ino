@@ -17,6 +17,7 @@ SoftwareSerial gpsSerial3(8, 9);
 SoftwareSerial lidarSerial(11, 10); // RX, TX
 SoftwareSerial xbee(13, 12);
 
+bool BTN_toggle();
 void readGPS1();
 void readGPS2();
 void readGPS3();
@@ -48,8 +49,12 @@ DFRobot_TFmini  lidar;
 uint16_t distance, strength;   // 거리와 강도를 담는 변수
 
 //xbee
-int i = 0;
+int i = 0; //test state
 
+//BTN
+bool BTN_STATE = 1;
+bool current_btn = 0;
+bool prev_btn = 0;
 
 void setup() {
     Serial.begin(9600);
@@ -64,64 +69,27 @@ void setup() {
 }
 
 void loop() {
-    if (state == GPS1) {
-        Serial.println("GPS1");
-        readGPS1();
-        state = GPS2;
-    }
-    else if (state == GPS2) {
-        Serial.println("GPS2");
-        readGPS2();
-        state = GPS3;
-    }
-    else if (state == GPS3) {
-        Serial.println("GPS3");
-        readGPS3();
-        state = IMU;
-    }
-    else if (state == IMU) {
-        Serial.println("IMU");
-        readIMU();
-        state = LIDAR;
-    }
-    else if (state == LIDAR) {
-        Serial.println("LIDAR");
-        readLidar();
-        state = TX;
-    }
-    else if (state == TX) {
+    if(BTN_STATE = 1){
+    //if(BTN_toggle()){
         Serial.print("TEST ");
         Serial.println(i);
-
-        Serial.print("GPS1 : ");
-        Serial.print(latitude[0], 15);
-        Serial.print("  /  ");
-        Serial.println(longitude[0], 15);
-        Serial.print("GPS2 : ");
-        Serial.print(latitude[1], 15);
-        Serial.print("  /  ");
-        Serial.println(longitude[1], 15);
-        Serial.print("GPS3 : ");
-        Serial.print(latitude[2], 15);
-        Serial.print("  /  ");
-        Serial.println(longitude[1], 15);
-        Serial.print("IMU : ");
-        Serial.print(euler[0], 10);
-        Serial.print("  /  ");
-        Serial.print(euler[1], 10);
-        Serial.print("  /  ");
-        Serial.println(euler[2], 10);
-        /*
-        Serial.print("Distance = ");
-        Serial.print(distance);
-        Serial.print("cm  /   ");
-        Serial.print("Strength = ");
-        Serial.println(strength);
-        */
+        readGPS1();
+        readGPS2();
+        readGPS3();
+        readIMU();
+        readLidar();           
         xbeeTX();
-        Serial.println("TX DONE");
-        state = GPS1;
     }
+    BTN_STATE = 0;
+    delay(3000);
+}
+
+bool BTN_toggle(){
+    current_btn = digitalRead();
+    if ( (prev_btn ^ current_btn) == 1){
+        return 1;
+    }
+    prev_btn = current_btn;
 }
 
 void readGPS1() {
@@ -135,6 +103,7 @@ void readGPS1() {
     }
     flag[1] = 1;
     gpsSerial2.listen();
+    state = GPS2;
 }
 
 void readGPS2() {
@@ -148,6 +117,7 @@ void readGPS2() {
     }
     flag[2] = 1;
     gpsSerial3.listen();
+    state = GPS3;
 }
 
 void readGPS3() {
@@ -161,6 +131,7 @@ void readGPS3() {
     }
     flag[3] = 1;
     imuSerial.listen();
+    state = IMU;
 }
 
 void readIMU() {
@@ -171,6 +142,7 @@ void readIMU() {
     }
     flag[4] = 1;
     lidarSerial.listen();
+    state = LIDAR;
 }
 
 void readLidar() {
@@ -183,6 +155,7 @@ void readLidar() {
     }
     flag[5] = 1;
     gpsSerial1.listen();
+    state = TX;
 }
 
 void xbeeTX() {
@@ -215,6 +188,8 @@ void xbeeTX() {
     flag[5] = 0;
     flag[0] = 1;
     gpsSerial1.listen();
+    state = GPS1;
+
     i++;
 }
 
