@@ -1,3 +1,4 @@
+#define DEBUG
 #include <SoftwareSerial.h>
 #include <DFRobot_TFmini.h>
 
@@ -23,7 +24,7 @@ void readGPS2();
 void readGPS3();
 void readIMU();
 void readLidar();
-
+void sensor_monitor();
 int parsingGPS(char c, int *nowflag, double *latitude, float *longitude);
 int EBimuAsciiParser(float *item, int number_of_item);
 
@@ -79,6 +80,9 @@ void loop() {
         readIMU();
         readLidar();           
         xbeeTX();
+        #ifdef DEBUG
+            sensor_monitor();
+        #endif
     }
     BTN_STATE = 0;
 }
@@ -164,7 +168,6 @@ void readLidar() {
 void xbeeTX() {
     xbee.print("TEST ");
     xbee.println(i);
-
     xbee.print("GPS1 : ");
     xbee.print(latitude[0], 15);
     xbee.print("  /  ");
@@ -255,4 +258,32 @@ int EBimuAsciiParser(float *item, int number_of_item) {
             sbuf_cnt = 0;
     }
     return result;
+}
+
+void sensor_monitor(){
+    Serial.print("GPS1 : ");
+    Serial.print(latitude[0], 15);
+    Serial.print("  /  ");
+    Serial.println(longitude[0], 15);
+    Serial.print("GPS2 : ");
+    Serial.print(latitude[1], 15);
+    Serial.print("  /  ");
+    Serial.println(longitude[1], 15);
+    Serial.print("GPS3 : ");
+    Serial.print(latitude[2], 15);
+    Serial.print("  /  ");
+    Serial.println(longitude[1], 15);
+    Serial.print("IMU : ");
+    Serial.print(euler[0], 10);
+    Serial.print("  /  ");
+    Serial.print(euler[1], 10);
+    Serial.print("  /  ");
+    Serial.println(euler[2], 10);
+    /*
+    Serial.print("Distance = ");
+    Serial.print(distance);
+    Serial.print("cm  /   ");
+    Serial.print("Strength = ");
+    Serial.println(strength);
+    */
 }
