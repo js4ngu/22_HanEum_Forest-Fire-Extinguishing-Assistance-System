@@ -210,28 +210,25 @@ void xbeeTX() {
     #ifdef DEBUG
         Serial.println("XBEE");
     #endif
-    xbee.print("TEST ");
-    xbee.println(i);
-    xbee.print("GPS1 : ");
     xbee.print(latitude[0], 15);
-    xbee.print("  /  ");
-    xbee.println(longitude[0], 15);
-    xbee.print("GPS2 : ");
+    xbee.print(",");
+    xbee.print(longitude[0], 15);
+    xbee.print(",");
     xbee.print(latitude[1], 15);
-    xbee.print("  /  ");
-    xbee.println(longitude[1], 15);
-    xbee.print("GPS3 : ");
+    xbee.print(",");
+    xbee.print(longitude[1], 15);
+    xbee.print(",");
     xbee.print(latitude[2], 15);
-    xbee.print("  /  ");
-    xbee.println(longitude[2], 15);
-    xbee.print("IMU : ");
+    xbee.print(",");
+    xbee.print(longitude[2], 15);
+    xbee.print(",");
     xbee.print(euler[0], 10);
-    xbee.print("  /  ");
+    xbee.print(",");
     xbee.print(euler[1], 10);
-    xbee.print("  /  ");
+    xbee.print(",");
     xbee.println(euler[2], 10);
     /*
-    xbee.print("Distance : ");
+    xbee.print(",");
     xbee.println(distance);
     */
     xbee.print("\n\r");
