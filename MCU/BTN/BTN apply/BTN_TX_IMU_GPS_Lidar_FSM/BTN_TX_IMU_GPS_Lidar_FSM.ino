@@ -14,7 +14,7 @@
 SoftwareSerial imuSerial(2, 3);
 SoftwareSerial gpsSerial1(4, 5);
 SoftwareSerial gpsSerial2(6, 7);
-SoftwareSerial gpsSerial3(8, 9);
+SoftwareSerial gpsSerial3(9, 8);
 SoftwareSerial lidarSerial(11, 10); // RX, TX
 SoftwareSerial xbee(13, 12);
 
@@ -70,7 +70,6 @@ void setup() {
 }
 
 void loop() {
-    //if(BTN_STATE = 1){
     if(BTN_toggle() == 1){
         Serial.print("TEST ");
         Serial.println(i);
@@ -100,6 +99,9 @@ bool BTN_toggle(){
 }
 
 void readGPS1() {
+    #ifdef DEBUG
+        Serial.println("GPS1");
+    #endif
     while (flag[0]) {
         if (gpsSerial1.available()) {
             c = gpsSerial1.read(); // 센서의 값 읽기
@@ -108,12 +110,21 @@ void readGPS1() {
             }
         }
     }
+    #ifdef DEBUG
+        Serial.print("Lat : ");
+        Serial.println(latitude[0]);
+        Serial.print("Long : ");
+        Serial.println(longitude[0]);
+    #endif
     flag[1] = 1;
     gpsSerial2.listen();
     state = GPS2;
 }
 
 void readGPS2() {
+    #ifdef DEBUG
+        Serial.println("GPS2");
+    #endif
     while (flag[1]) {
         if (gpsSerial2.available()) {
             c = gpsSerial2.read(); // 센서의 값 읽기
@@ -122,12 +133,21 @@ void readGPS2() {
             }
         }
     }
+    #ifdef DEBUG
+        Serial.print("Lat : ");
+        Serial.println(latitude[1]);
+        Serial.print("Long : ");
+        Serial.println(longitude[1]);
+    #endif
     flag[2] = 1;
     gpsSerial3.listen();
     state = GPS3;
 }
 
 void readGPS3() {
+    #ifdef DEBUG
+        Serial.println("GPS3");
+    #endif
     while (flag[2]) {
         if (gpsSerial3.available()) {
             c = gpsSerial3.read(); // 센서의 값 읽기
@@ -136,23 +156,43 @@ void readGPS3() {
             }
         }
     }
+    #ifdef DEBUG
+        Serial.print("Lat : ");
+        Serial.println(latitude[2]);
+        Serial.print("Long : ");
+        Serial.println(longitude[2]);
+    #endif
     flag[3] = 1;
     imuSerial.listen();
     state = IMU;
 }
 
+
 void readIMU() {
+    #ifdef DEBUG
+        Serial.println("IMU");
+    #endif
     while (flag[3]) {
         if(EBimuAsciiParser(euler, 3)){
             flag[3] = 0;
         }
     }
+    #ifdef DEBUG
+        Serial.print(euler[0], 10);
+        Serial.print("  /  ");
+        Serial.print(euler[1], 10);
+        Serial.print("  /  ");
+        Serial.println(euler[2], 10);
+    #endif
     flag[4] = 1;
     lidarSerial.listen();
     state = LIDAR;
 }
 
 void readLidar() {
+    #ifdef DEBUG
+        Serial.println("Lidar");
+    #endif
     while (flag[4]) { 
         //if (lidar.measure()) {                  // 거리와 신호의 강도를 측정합니다. 성공하면 을 반환하여 if문이 작동합니다.
         //    distance = lidar.getDistance();       // 거리값을 cm단위로 불러옵니다.
@@ -166,6 +206,9 @@ void readLidar() {
 }
 
 void xbeeTX() {
+    #ifdef DEBUG
+        Serial.println("XBEE");
+    #endif
     xbee.print("TEST ");
     xbee.println(i);
     xbee.print("GPS1 : ");
@@ -179,7 +222,7 @@ void xbeeTX() {
     xbee.print("GPS3 : ");
     xbee.print(latitude[2], 15);
     xbee.print("  /  ");
-    xbee.println(longitude[1], 15);
+    xbee.println(longitude[2], 15);
     xbee.print("IMU : ");
     xbee.print(euler[0], 10);
     xbee.print("  /  ");
@@ -272,7 +315,7 @@ void sensor_monitor(){
     Serial.print("GPS3 : ");
     Serial.print(latitude[2], 15);
     Serial.print("  /  ");
-    Serial.println(longitude[1], 15);
+    Serial.println(longitude[2], 15);
     Serial.print("IMU : ");
     Serial.print(euler[0], 10);
     Serial.print("  /  ");

@@ -1,0 +1,6 @@
+{
+    "configuration": "cpu=atmega328old",
+    "board": "arduino:avr:nano",
+    "port": "COM21",
+    "sketch": "MCU\\IMU\\imu\\imu.ino"
+}
