@@ -25,6 +25,7 @@ def Decode(A):
     else :
         print ("")
         return False
+
 def Ardread(): 
         if ARD.readable():
             LINE = ARD.readline()

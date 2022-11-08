@@ -1,12 +1,52 @@
 import math
 import geopy
 import geopy.distance
+import serial
 
 """
 명진당 : 37.2221 / 127.1885
 5공학관 : 37.2221 / 127.1876
 명진당 ~ 5공 : 79.69 / 269.9997
 """
+
+'''
+PORT = 'COM9'
+BaudRate = 9600
+xbee= serial.Serial(PORT,BaudRate)
+
+#parsing
+def Decode(A):
+    A = A.decode('utf-8','ignore')
+    A = str(A)
+    if A[0]=='S':                      
+        if (len(A)==125):                
+            lat1 = float(A[1:15])
+            lon1 = float(A[16:30])
+            lat2 = float(A[31:45])
+            lon2 = float(A[46:60])
+            lat3 = float(A[61:75])
+            lon3 = float(A[76:90])
+            pitch = float(A[91:100])
+            roll = float(A[101:110])
+            yaw = float(A[111:120])
+            distance = float(A[121:124])
+            result= [lat1,lon1,lat2,lon2,lat3,lon3,pitch,roll,yaw,distance]
+            return result
+        else : 
+            print ("ERR : %d" %len(A))
+            return False
+    else :
+        print ("")
+        return False
+
+def xbeeread():
+        if xbee.readable():
+            LINE = xbee.readline()
+            code=Decode(LINE) 
+            return code
+        else : 
+            print("")
+'''
 def calc_Cord(lat_ORG, lon_ORG ,bearing, mDistance):
     distance = 0.001 * mDistance
     origin = geopy.Point(lat_ORG, lon_ORG)
@@ -29,9 +69,9 @@ def main():
     
     #calc new data
     distance = calc_Distance(pitch, Lidar)
-    lat_TGT, lon_TGT = calc_Cord(lat_org, lon_org, heading, distance)
+    data = calc_Cord(lat_org, lon_org, heading, distance)
     
     print(distance)
-    print(lat_TGT, lon_TGT)
+    print(data)
 
 main()

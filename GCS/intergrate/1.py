@@ -46,6 +46,18 @@ def removeWP():
     if os.path.exists(file_path):
         os.remove(file_path)
 
+def hotkeyMP():
+    pyautogui.click(134,102) #계획 클릭
+    time.sleep(2)
+    pyautogui.click(2771,413) #파일로드 클릭
+    time.sleep(2)
+    pyautogui.click(435,353) #파일선택
+    time.sleep(2)
+    pyautogui.click(1060,947) #파일열기
+    time.sleep(2)
+    pyautogui.click(2703,644) #쓰기
+    time.sleep(2)
+
 xbee = serial.Serial(                    # serial 객체 생성
     port='COM7',            # 시리얼통신에 사용할 포트
     baudrate=9600,                # 통신속도 지정
@@ -81,7 +93,7 @@ def main():
     while True:
         raw_DATA = readXbee()
         if len(raw_DATA) == 10 :
-            print(raw_DATA)
+            print("RAW DATA : ",raw_DATA)
             lat1 = float(raw_DATA[0])
             lon1 = float(raw_DATA[1])
             lat2 = float(raw_DATA[2])
@@ -91,12 +103,13 @@ def main():
             pitch = float(raw_DATA[6])
             heading = float(raw_DATA[7])
             roll = float(raw_DATA[8])
-            Lidar = int(raw_DATA[9])
+            Lidar = int(raw_DATA[9]) * 10
 
             removeWP()
             distance = calc_Distance(pitch, Lidar)
             data = calc_Cord(lat1, lon1, heading, distance)
-            print(distance)
-            print(data)
+            print("Distance : ", distance)
+            print("TGT LAT LON : ", data)
             writeWP(data)
+
 main()

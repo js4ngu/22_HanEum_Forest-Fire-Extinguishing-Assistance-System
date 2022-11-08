@@ -1,7 +1,7 @@
 #define DEBUG
 #include <SoftwareSerial.h>
 #include <DFRobot_TFmini.h>
-#37.6645 126.7417
+
 #define GPS1 0
 #define GPS2 1
 #define GPS3 2
@@ -210,28 +210,25 @@ void xbeeTX() {
     #ifdef DEBUG
         Serial.println("XBEE");
     #endif
-    xbee.print(latitude[0], 15);
-    xbee.print(",");
-    xbee.print(longitude[0], 15);
-    xbee.print(",");
-    xbee.print(latitude[1], 15);
-    xbee.print(",");
-    xbee.print(longitude[1], 15);
-    xbee.print(",");
-    xbee.print(latitude[2], 15);
-    xbee.print(",");
-    xbee.print(longitude[2], 15);
-    xbee.print(",");
+    xbee.print("37.6645");
+    xbee.print(" ");
+    xbee.print("126.7417");
+    xbee.print(" ");
+    xbee.print("37.6645");
+    xbee.print(" ");
+    xbee.print("126.7417");
+    xbee.print(" ");
+    xbee.print("37.6645");
+    xbee.print(" ");
+    xbee.print("126.7417");
+    xbee.print(" ");
     xbee.print(euler[0], 10);
-    xbee.print(",");
+    xbee.print(" ");
     xbee.print(euler[1], 10);
-    xbee.print(",");
-    xbee.println(euler[2], 10);
-    /*
-    xbee.print(",");
-    xbee.println(distance);
-    */
-    xbee.print("\n\r");
+    xbee.print(" ");
+    xbee.print(euler[2], 10);
+    xbee.print(" ");
+    xbee.println("40");
     flag[5] = 0;
     flag[0] = 1;
     gpsSerial1.listen();
