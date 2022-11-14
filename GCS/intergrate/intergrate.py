@@ -1,6 +1,7 @@
 import math
 import csv
 import os
+from turtle import heading
 import geopy
 import geopy.distance
 import pyautogui
@@ -47,15 +48,15 @@ def removeWP():
         os.remove(file_path)
 
 def hotkeyMP():
-    pyautogui.click(134,102) #계획 클릭
+    pyautogui.click(92,54) #계획 클릭
     time.sleep(2)
-    pyautogui.click(2771,413) #파일로드 클릭
+    pyautogui.click(1838,260) #파일로드 클릭
     time.sleep(2)
-    pyautogui.click(435,353) #파일선택
+    pyautogui.click(501,211) #파일선택
     time.sleep(2)
-    pyautogui.click(1060,947) #파일열기
+    pyautogui.click(751,600) #파일열기
     time.sleep(2)
-    pyautogui.click(2703,644) #쓰기
+    pyautogui.click(1803,390) #쓰기
     time.sleep(2)
 
 xbee = serial.Serial(                    # serial 객체 생성
@@ -66,6 +67,7 @@ xbee = serial.Serial(                    # serial 객체 생성
     bytesize=serial.EIGHTBITS,      # 데이터 비트수 지정
     timeout=1                       # 타임아웃 설정
 )
+
 
 def readXbee(): 
     if xbee.readable():
@@ -101,8 +103,8 @@ def main():
             lat3 = float(raw_DATA[4])
             lon3 = float(raw_DATA[5])
             pitch = float(raw_DATA[6])
-            heading = float(raw_DATA[7])
-            roll = float(raw_DATA[8])
+            roll = float(raw_DATA[7])
+            heading = float(raw_DATA[8])
             Lidar = int(raw_DATA[9]) * 10
 
             removeWP()
@@ -110,6 +112,9 @@ def main():
             data = calc_Cord(lat1, lon1, heading, distance)
             print("Distance : ", distance)
             print("TGT LAT LON : ", data)
+            print("COORD CALC DONE")
             writeWP(data)
-
+            print("WP FILE WRITE DONE")
+            hotkeyMP()
+            print("READY TO FLIGHT")
 main()

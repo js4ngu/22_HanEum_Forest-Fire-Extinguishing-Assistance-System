@@ -31,7 +31,7 @@ void loop(){
         Serial.println("mm");
         Serial.print("Strength = ");
         Serial.println(strength);
-        delay(500);
+        //delay(500);
     }
-    delay(500);
+    delay(300);
 }
